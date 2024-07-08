@@ -1,0 +1,82 @@
+{% extends '../main_screen.html' %}
+<!-- Load... -->
+{% load static %}
+<!-- Styles -->
+{% block additionalStyles %}
+<link href="{% static 'css/copy_course_page.css' %}" rel="stylesheet" />
+{% endblock %}
+<!-- Scripts -->
+{% block additionalScripts %}
+<script defer src="{% static 'js/copy_course_data_handler.js' %}"></script>
+{% endblock %}
+<!-- Body -->
+{% block body %}
+<div class="head-title">
+  <h1>{{ title|default:"نسخ الدورات" }}</h1>
+</div>
+<form class="container">
+  <div class="select-container">
+    <div>
+      <label class="select" for="slct_1">
+        <select id="slct_1" name="institution" required="required">
+          <option value="" disabled="disabled" selected="selected">
+            إختر القسم
+          </option>
+          {% for inst in institutions %}
+          <option value="{{inst.id}}">{{inst.name}}</option>
+          {% endfor %}
+        </select>
+        <svg>
+          <use xlink:href="#select-arrow-down"></use>
+        </svg>
+      </label>
+    </div>
+
+    <div>
+      <label class="select" for="slct_2">
+        <select id="slct_2" name="course" required="required">
+          <option value="" disabled="disabled" selected="selected">
+            إختر الدورة
+          </option>
+          <!-- Wait user to select institution -->
+        </select>
+        <svg>
+          <use xlink:href="#select-arrow-down"></use>
+        </svg>
+      </label>
+    </div>
+
+    <div>
+      <label class="select" for="slct_3">
+        <select id="slct_3" name="copy-to-institution" required="required">
+          <option value="" disabled="disabled" selected="selected">
+            إختر القسم الناسخ
+          </option>
+          {% for inst in institutions %}
+          <option value="{{inst.id}}">{{inst.name}}</option>
+          {% endfor %}
+        </select>
+        <svg>
+          <use xlink:href="#select-arrow-down"></use>
+        </svg>
+      </label>
+    </div>
+    <!-- SVG Sprites-->
+    <svg class="sprites">
+      <symbol id="select-arrow-down" viewbox="0 0 10 6">
+        <polyline points="1 1 5 5 9 1"></polyline>
+      </symbol>
+    </svg>
+  </div>
+
+  <div class="buttons-container">
+    <button
+      type="submit"
+      formaction="{% url 'copy-course-data' %}"
+      id="copy_course_data_link"
+    >
+      نسخ الدورة
+    </button>
+  </div>
+</form>
+{% endblock %}

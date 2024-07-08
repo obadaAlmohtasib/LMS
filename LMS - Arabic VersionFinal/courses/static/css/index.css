@@ -1,0 +1,23 @@
+/* The main screen has custom background image */
+body {
+  /* background: rgba(54, 110, 116, 0.82); */
+  background: url("../image/app-bg-image-main.jpeg");
+  background-size: cover;
+}
+
+.inner-body {
+  position: relative;
+  top: 70px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.app-title {
+  font-size: 40px;
+  font-family: revert-layer;
+}
+/* The ".header" included in all pages except the index.html */
+.header {
+  display: none;
+}

@@ -1,0 +1,28 @@
+{% extends '../edit_entity_template.html' %}
+<!-- Body -->
+{% block body %}
+<div>
+  {% if success %}
+  <h2>تم تعديل معلومات جهة العمل بنجاح</h2>
+  <div class="confirmation-link-holder">
+    <h2>
+      للرجوع إلى القائمة السابقة إضغط
+      <a href="{% url 'user-sources-list' %}">هنا</a>
+    </h2>
+  </div>
+  {% else %}
+  <div class="form_container">
+    <form action="{% url 'edit-user-source' id %}" method="post">
+      <h2>تعديل معلومات جهة العمل</h2>
+      {% csrf_token %} {{ form.as_p }}
+
+      <div class="buttons-holder">
+        <button type="submit" class="update-submit">تعديل</button>
+        <a href="{% url 'user-sources-list' %}" class="cancel-action">إلغاء</a>
+        <button type="reset" class="reset-action">مسح</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,129 @@
+{% extends '../main_screen.html' %}
+<!-- Load... -->
+{% load custom_filters %}
+<!-- Load... -->
+{% load static %}
+<!-- Scripts -->
+{% block additionalScripts %}
+<script
+  defer
+  type="module"
+  src="{% static 'js/daily_entries_handler.js' %}"
+></script>
+{% endblock %}
+<!-- Body -->
+{% block body %}
+<style>
+  .add-row-holder {
+    display: flex;
+    justify-content: end;
+    padding-right: 70px;
+  }
+  .form-wrapper {
+    direction: rtl;
+    margin: 10px 70px 70px;
+    max-width: 90%;
+    padding: 1em 3em 2em 3em;
+    margin: 0em auto;
+    background-image: linear-gradient(to bottom right, #6ccce4e6, #a0f9bdc4);
+    border-radius: 4.2px;
+    box-shadow: 0px 3px 10px -2px rgba(0, 0, 0, 0.2);
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+  }
+  .hidden {
+    display: none;
+  }
+  .table-wrapper {
+    margin: 10px 0px 70px 70px;
+    box-shadow: 0px 35px 50px rgba(0, 0, 0, 0.2);
+    max-width: 90%;
+    max-height: 700px;
+    overflow-y: auto;
+  }
+
+  /* Scrollbar */
+  /* Works on Firefox */
+  .table-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: blue orange;
+  }
+  /* Works on Chrome, Edge, and Safari */
+  .table-wrapper::-webkit-scrollbar {
+    width: 8px;
+  }
+  .table-wrapper::-webkit-scrollbar-track {
+    background: orange;
+  }
+  .table-wrapper::-webkit-scrollbar-thumb {
+    background-color: blue;
+    border-radius: 20px;
+    border: 2px solid orange;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+  }
+</style>
+<!-- 
+  
+-->
+<div>
+  <div class="head-title">
+    <h1>{{ title|default:"جدول الحصص / التّدريس" }}</h1>
+  </div>
+  <div class="add-row-holder">
+    <a href="{% url 'get_daily_entry_form' course_group_id %}" class="add-row"
+      >إضافة حصة</a
+    >
+  </div>
+  <!-- {% url 'create_daily_entry' %} -->
+  <div class="table-wrapper">
+    {% if entries %}
+    <table class="fl-table">
+      <thead>
+        <tr>
+          <th>التسلسل</th>
+          <th>الدورة</th>
+          <th>المجموعة</th>
+          <th>الموضوع</th>
+          <th>التاريخ</th>
+          <th>التوقيت</th>
+          <th>المدرّبين</th>
+          <th>الحصة</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for model in entries %}
+        <tr
+          data-model-id="{{ model.id }}"
+          data-course-id="{{ model.course_id }}"
+        >
+          <td>{{ forloop.counter }}</td>
+          <td data-value="course">{{ model.course.name }}</td>
+          <td data-value="course_group">{{ model.course_group.name }}</td>
+          <td data-value="topic">{{ model.topic.name }}</td>
+          <td>{{ model.entry_date }}</td>
+          <td data-value="timing">{{ model.timing.timing }}</td>
+          <td data-value="user">{{model.users.all|join_items|linebreaksbr}}</td>
+          <td data-value="class_schedule">{{ model.class_schedule }}</td>
+          <td>
+            <!-- <a id="clone_link" href="#">CLONE</a> -->
+            <a id="edit_link" href="{% url 'edit_daily_entry' model.id  %}"
+              >تعديل</a
+            >
+            <a id="delete_link" href="#">حذف</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <h2>لم يتم إدخال حصص حتى الآن</h2>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

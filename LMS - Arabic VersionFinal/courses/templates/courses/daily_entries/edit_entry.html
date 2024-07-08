@@ -1,0 +1,53 @@
+{% extends '../edit_entity_template.html' %}
+<!-- load... -->
+{% load static %}
+<!-- Scripts -->
+{% block additionalScripts %}
+<script
+  defer
+  type="module"
+  src="{% static 'js/edit_entry_handler.js' %}"
+></script>
+{% endblock %}
+<!-- Body -->
+{% block body %}
+<div>
+  {% if success %}
+  <h2>تم تعديل معلومات الإدخال بنجاح</h2>
+  <div class="confirmation-link-holder">
+    <h2>
+      للرجوع إلى القائمة السابقة إضغط
+      <a href="{% url 'index' %}">هنا</a>
+    </h2>
+  </div>
+  {% else %}
+  <div class="form_container">
+    <form action="" method="post">
+      <h2>تعديل معلومات الإدخال</h2>
+      <input type="hidden" name="entry_object_id" value="{{ instance.id }}" />
+      <p>
+        <label for="id_course">الدورة: </label>
+        <input
+          id="id_course"
+          type="text"
+          value="{{ instance.course.name }}"
+          readonly
+        />
+      </p>
+
+      {% csrf_token %} {{ form.as_p }}
+      <div class="buttons-holder">
+        <button type="submit" class="update-submit">تعديل</button>
+        <!-- <a href="{% url 'get_daily_entries' %}" class="cancel-action">إلغاء</a> -->
+        <a
+          href="{% url 'view_course_group' instance.course_group.id %}"
+          class="cancel-action"
+          >إلغاء</a
+        >
+        <button type="reset" class="reset-action">مسح</button>
+      </div>
+    </form>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

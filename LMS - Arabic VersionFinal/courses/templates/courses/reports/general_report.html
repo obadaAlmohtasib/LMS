@@ -1,0 +1,306 @@
+{% load static %} 
+<!-- Load... -->
+{% load custom_filters %}
+<!DOCTYPE html> 
+<html lang="en"> 
+  <head>
+    <link href="{% static 'css/base.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/table.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/report/print.css' %}" rel="stylesheet" media="print" />
+    <style>
+      @media screen {
+        .report-header {
+          display: none;
+        }
+        .report-footer {
+          display: none;
+        }
+      }
+      .fl-table {
+        direction: rtl;
+        border: 2px solid black;
+      } 
+      .fl-table td {
+        border-right: 2px dashed rgb(135, 132, 132);
+        border-bottom: 2px dashed rgb(135, 132, 132);
+      } 
+      .white-bg-color {
+        background: transparent;
+      }
+      .gray-bg-color {
+        background: lightgrey;
+      }
+      /* tr > th, tr > td {
+        /* First td = For time */
+        /* margin: 0px;
+        width: 30px; 
+      } */
+      tr td:first-child {
+        width: 1px;
+        height: 1px;
+        padding: 0px; 
+      }
+      td div {
+        height: 100%;
+        display: flex;
+        align-items: stretch;
+        justify-content: space-around;
+        /* width: fit-content; */
+        gap: 0px; 
+      }
+      td div span {
+        flex-grow: 1; 
+        padding: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      td div span:not(:last-child) {
+        border-left: 2px dashed rgb(135, 132, 132); 
+      }
+      td div span:first-child {
+        width: 15px;
+      } 
+      td div span:nth-child(2) { 
+        width: 45px; 
+      } 
+      td > div span:nth-child(3) { 
+        width: 45px;
+      }
+      td > div span:last-child { 
+        width: 55px;
+      } 
+    </style>
+  </head>
+  <body>
+    <h2><span dir="auto">{{ institution_name }}</span> التقرير الأسبوعي لِ</h2>
+
+    <!-- Print Functionality -->
+    <div class="print-func-holder">
+      <!-- <div>
+        <label for="week">Choose Week: </label>
+        <input list="weeks" name="week" id="week" />
+        <datalist id="weeks">
+          {% for i in weeks_count %}
+          <option value="Week-{{ i }}"></option>
+          {% endfor %}
+        </datalist>
+      </div> -->
+      <div>
+        <button type="button" id="print_btn" class="print-action">طباعة</button>
+      </div>
+    </div>
+
+    <!-- Report Summary -->
+    <div>
+      {% for group, days in report.items %}
+      <div class="table-page-container">
+        <!-- Header -->
+        {% with object=days|get_object %}
+        <header class="report-header">
+          <div>
+            <!-- <h3>Course name: {{ object.course_name }}</h3> -->
+            <!-- <h3>Group: {{ group }}</h3> -->
+            <h3><bdi>{{ object.course_name }}</bdi> :الدورة</h3>
+            <h3>{{ group }}</h3>
+          </div>
+          <div>
+            <img src="{% static 'image/logo.png' %}" alt='logo' width=120 height=120></img>
+          </div>
+          <div>
+            <!-- <h3>Institution name: {{ institution_name }}</h3> -->
+            <h3>
+              <span>وزارة الحرس الوطني</span>
+              <br />
+              <span>مدرسة سلاح الإشارة</span>
+            </h3>
+          </div>
+        </header>
+        
+        <!-- Table -->
+        <h3 class="screen-view-h3" style="text-align: center">Group {{ group }}</h3>
+        <div class="table-wrapper" id="Week-{{week}}">
+        <table class="fl-table">
+          <thead>
+            <tr>
+              {% for head in days|get_keys %}
+              <!-- -->
+              {% if head not in "break_time,Time" %}
+              <th data-date-head="yes">{{head}}</th>
+              {% endif %}
+
+              {% if head == "Time" %}
+              <th>
+                <span>أسبوع التدريب رقم</span>
+                <span>{{ object.week_number }}</span>
+                /
+                <span>{{ object.no_of_weeks }}</span>
+              </th>
+              {% endif %}
+              <!-- -->
+              {% endfor %}
+            </tr>
+          </thead>
+        {% endwith %}
+
+          <tbody>
+            {% for cell in days|iter_greater_length %}
+
+            <!-- Break time -->
+            {% with time=days|get_day:0|return_item:cell %}
+            <!-- -->
+            {% if days|get_break_time|is_break_time:time %}
+            <tr style="background: lightgrey;">
+            {% with break=days|get_break_time|format_and_remove_break_time:days %}
+              <td style="padding: 0px; height: 1px;">
+                <div>                    
+                    <span><b></b></span>
+                    <span><b>{{ break.start }}</b></span>
+                    <span><b>{{ break.end }}</b></span>
+                    <span style="border-left: none;"><b></b></span>
+                </div>
+              </td>
+              <td colspan="5" style="border-right: none;">
+                  <!-- Kashida -->
+                  <!-- Shift + j -->
+                  <b>فـــــــــــــــطـــــــــــــــور</b> 
+              </td>
+            {% endwith %}
+            </tr>
+            <!-- -->
+            {% endif %}
+            <!-- -->
+            {% endwith %}
+            <!-- -->
+
+            {% for i in "0" %}
+            {% with is_initial=days|first_class_in_days:cell %}
+            <tr
+              data-light="{{ is_initial }}"
+              class="{% if is_initial == 0 %}gray-bg-color{% else %}white-bg-color{% endif %}"
+            >
+              <!-- For time -->
+              <!-- NOTE: get_day => Where day is the key in days dict, get_day:0 = get values of the zeroth key  -->
+              <!-- Note: Each day number has list of values, and at the zeroth index we've store the time list -->
+              {% with time_obj=days|get_day:0|build_formatted_time:cell %} <!--  |return_item:cell  -->
+              <td> <!-- height: 1px; To allow child to expand and fill the height --> 
+                {% if time_obj == 'No Data Available' %}               
+                <pre style="padding: 8px;">{{ time_obj }}</pre> 
+                {% else %}
+                <div>
+                    <span><b>   {{ time_obj.class_num }}   </b></span> 
+                    <span><b>   {{ time_obj.start_time }}   </b></span> 
+                    <span><b>   {{ time_obj.end_time }}   </b></span> 
+                    {% if is_initial == 0 %}
+                    <span>
+                      <b>الرئيسي<br>المدرب<br>المدرب<br><br>المكان</b>
+                    </span> 
+                    {% else %}
+                    <span>
+                      <b>المادة<br>المدرب<br>المدرب<br><br>المكان</b>
+                    </span> 
+                    {% endif %}
+                </div>
+                {% endif %}
+              </td>
+              {% endwith %}
+            {% endwith %}
+            
+              <!-- NOTE: get_day => Where day is the key in days dict, get_day:N = get values of the Nth key  -->
+              <!-- arg_1 | filter_1:arg_2 | filter_2:arg_3 -->
+              {% with days|get_day:1|return_item:cell as first_cell %}
+              <td
+                data-light="{{ first_cell.priority }}"
+                class="{% if first_cell.priority == 1 %}white-bg-color{% else %}gray-bg-color{% endif %}"
+              >
+                <pre>{{ first_cell }}</pre>
+              </td>
+              {% endwith %}
+              <!-- -->
+              {% with days|get_day:2|return_item:cell as second_cell %}
+              <td
+                data-light="{{ second_cell.priority }}"
+                class="{% if second_cell.priority == 1 %}white-bg-color{% else %}gray-bg-color{% endif %}"
+              >
+                <pre>{{ second_cell }}</pre>
+              </td>
+              {% endwith %}
+              <!-- -->
+              {% with days|get_day:3|return_item:cell as third_cell %}
+              <td
+                data-light="{{ third_cell.priority }}"
+                class="{% if third_cell.priority == 1 %}white-bg-color{% else %}gray-bg-color{% endif %}"
+              >
+                <pre>{{ third_cell }}</pre>
+              </td>
+              {% endwith %}
+              <!-- -->
+              {% with days|get_day:4|return_item:cell as fourth_cell %}
+              <td
+                data-light="{{ fourth_cell.priority }}"
+                class="{% if fourth_cell.priority == 1 %}white-bg-color{% else %}gray-bg-color{% endif %}"
+              >
+                <pre>{{ fourth_cell }}</pre>
+              </td>
+              {% endwith %}
+              <!-- -->
+              {% with days|get_day:5|return_item:cell as fifth_cell %}
+              <td
+                data-light="{{ fifth_cell.priority }}"
+                class="{% if fifth_cell.priority == 1 %}white-bg-color{% else %}gray-bg-color{% endif %}"
+              >
+                <pre>{{ fifth_cell }}</pre>
+              </td>
+              {% endwith %}
+            </tr>
+            {% endfor %}
+            <!-- -->
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+        <!-- Footer  -->
+        <footer class="report-footer"> 
+          <div>
+            <pre>
+              Signature:
+              
+              
+              _______________________
+            </pre>
+          </div>
+        </footer>
+      </div>
+
+      <!-- Page Break -->
+      <p style="page-break-after: always;"></p>
+
+      {% endfor %}
+    </div>
+  </body>
+  <script>
+    //
+    // Print Functionality
+    document.querySelector("#print_btn").addEventListener("click", function () {
+      return window.print();
+    });
+
+    document.querySelectorAll('th[data-date-head="yes"]').forEach(el => {
+        const miladi_date = el.textContent
+        const hijri = new Date(miladi_date).toLocaleDateString("ar-SA", { 
+            weekday:"long", 
+            year:"numeric", 
+            month:"numeric", 
+            day:"2-digit" 
+        }); 
+        if (hijri === 'Invalid Date')
+            return 
+
+        const [day, hijri_date] = hijri.split('،')
+        // On the standard Arabic keyboard layout, The comma used for text is Shift+k 
+        // To embed HTML element properly into another element you've to use innerHTML (Do not use textContent) 
+        el.innerHTML = [day, miladi_date].join("<br>") // Be careful (against attacks)        
+    })
+  </script>
+</html>

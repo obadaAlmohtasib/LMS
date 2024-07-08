@@ -1,0 +1,43 @@
+{% extends './main_screen.html' %}
+<!-- -->
+{% block body %}
+<div>
+  <div class="head-title">
+    <h1>{{ title|default:"Institutions" }}</h1>
+  </div>
+  <div class="table-wrapper">
+    <a href="{% url 'create_institution' %}">Create New</a>
+    {% if data %}
+    <table class="fl-table">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Name</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for model in data %}
+        <tr>
+          <td>{{ model.id }}</td>
+          <td>{{ model.name }}</td>
+          <td data-model-id="{{ model.id }}" data-model-name="{{ model.name }}">
+            <a href="#">VIEW</a>
+            <a href="#">EDIT</a>
+            <a id="delete_link">DELETE</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <h2>No Institution Records</h2>
+    {% endif %}
+  </div>
+</div>
+<script>
+  document.querySelector("#delete_link").addEventListener("click", () => {
+    let choise = confirm("Are you sure that you want to delete?");
+  });
+</script>
+{% endblock %}

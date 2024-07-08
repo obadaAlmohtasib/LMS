@@ -1,0 +1,104 @@
+{% extends '../main_screen.html' %}
+<!-- Body -->
+{% block body %}
+<div>
+  <div class="head-title">
+    <!-- <h1>Worksheet For {{u_source}} Users In {{ year_month }}</h1> -->
+    <h1>
+      <span>ورقة العمل الشهرية للمدرّبين</span>
+      <span>({{ u_source }})</span>
+      <span>خلال شهر</span>
+      <span class="year-month">{{ year_month }}</span>
+    </h1>
+  </div>
+  <div style="margin-left: 100px">
+    <button type="button" id="print_btn" class="print-action">طباعة</button>
+  </div>
+  <div class="table-wrapper">
+    {% if commitments %}
+    <table class="fl-table">
+      <thead>
+        <tr>
+          <th>التسلسل</th>
+          <th>المدرّب</th>
+          <th>عدد الحصص التّي تمّ تدريسها</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for model in commitments %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ model.user__name }}</td>
+          <td>{{ model.classes_count }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <h2>لا توجد بيانات</h2>
+    {% endif %}
+  </div>
+</div>
+<script>
+  const spanEl = document.querySelector(".head-title h1 span.year-month");
+  const monthYear = spanEl.textContent;
+  let monthYearArabic = new Date(monthYear).toLocaleDateString("ar", {
+    year: "numeric",
+    month: "short",
+  });
+  // convert english numbers to arabic
+  const arabicDigits = ["۰", "١", "٢", "٣", "٤", "٥", "٦", "٧", "٨", "٩"];
+  for (let i = 0; i < monthYearArabic.length; i++) {
+    const ch = monthYearArabic.charAt(i);
+    const code = monthYearArabic.charCodeAt(i);
+    if (code >= 48 && code <= 57) {
+      monthYearArabic = monthYearArabic.replaceAll(ch, arabicDigits[ch]);
+    }
+  }
+  spanEl.textContent = monthYearArabic;
+
+  // Print Functionality
+  document.querySelector("#print_btn").addEventListener("click", function () {
+    const table = document.querySelector(".table-wrapper").innerHTML;
+    const title = document.querySelector(".head-title h1").innerHTML;
+    createPDF(table, title);
+  });
+
+  function createPDF(table, title) {
+    let sTable = table;
+
+    let style = "<style>";
+    // Media Print settings
+    style = style + "@media print { tr { break-inside: avoid; } }";
+
+    style = style + "body { direction: rtl; }";
+    style = style + "h2 { text-align: center; margin-top: 38px; }";
+    style = style + "table {width: 100%;font: 17px Calibri;}";
+    style =
+      style +
+      "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+    style = style + "padding: 2px 3px;text-align: center;}";
+    style = style + "table tbody tr:nth-of-type(odd) { background: #EEEEEE;}";
+    style = style + "table thead tr { background: #000; color: white; }";
+    style = style + "</style>";
+
+    // CREATE A WINDOW OBJECT
+    // let win = window.open("", "", "height=700,width=700");
+    // Instead of creating a window object, Create a document.
+    let win = new Document();
+
+    document.write("<html><head>");
+    document.write("<title>Profile</title>"); // <title> FOR PDF HEADER.
+    document.write(style); // ADD STYLE INSIDE THE HEAD TAG.
+    document.write("</head>");
+    document.write("<body>");
+    document.write(`<h2>${title}</h2>`);
+    document.write(sTable); // THE TABLE CONTENTS INSIDE THE BODY TAG.
+    document.write("</body></html>");
+
+    document.close(); // CLOSE THE CURRENT WINDOW.
+
+    print(); // PRINT THE CONTENTS.
+  }
+</script>
+{% endblock %}

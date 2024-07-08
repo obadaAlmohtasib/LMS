@@ -1,0 +1,119 @@
+{% load static %}
+<!-- Load... -->
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link href="{% static 'css/base.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/table.css' %}" rel="stylesheet" />
+  </head>
+  <body>
+    <h2 style="text-align: center">Report For {{ course_name }}</h2>
+
+    <!-- Print Functionality -->
+    <div>
+      <div>
+        <label for="week">Choose Week: </label>
+        <input list="weeks" name="week" id="week" />
+        <datalist id="weeks">
+          {% for i in weeks_count %}
+          <option value="Week-{{ i }}"></option>
+          {% endfor %}
+        </datalist>
+      </div>
+      <div>
+        <button type="button" id="print_btn" class="print-action">طباعة</button>
+      </div>
+    </div>
+
+    <!-- Report Summary -->
+    <div>
+      {% for week, days in report.items %}
+      <h3 style="text-align: center">Week #{{ week }}</h3>
+      <div class="table-wrapper" id="Week-{{week}}">
+        <table class="fl-table">
+          <thead>
+            <tr>
+              {% for head in days|get_keys %}
+              <th>{{head}}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for cell in days|iter_greater_length %}
+            <tr>
+              {% for i in "0" %}
+              <!-- arg_1 | filter_1:arg_2 | filter_2:arg_3 -->
+              <td>{{ days|get_day:0|return_item:cell }}</td>
+              <td>{{ days|get_day:1|return_item:cell }}</td>
+              <td>{{ days|get_day:2|return_item:cell }}</td>
+              <td>{{ days|get_day:3|return_item:cell }}</td>
+              <td>{{ days|get_day:4|return_item:cell }}</td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endfor %}
+    </div>
+  </body>
+  <script>
+    //
+    // Iterate over table columns
+    //
+    // NOTE:
+    // We've have to loop over table columns, and not over table rows
+    // Filling the table column by column
+    // console.log("Table - Column By Column");
+    // Access Specific column
+    // document.querySelectorAll("table[data-week='1'] th").forEach((el) => {
+    //   console.log(el.innerText);
+    // });
+
+    // Set custom data attribute
+    // document
+    //   .querySelectorAll("table[data-week='1'] td[data-day='Sat']")
+    //   .forEach((el) => {
+    //     console.log(el.innerText);
+    //   });
+
+    //
+    // Print Functionality
+    document.querySelector("#print_btn").addEventListener("click", function () {
+      let table_id = document.querySelector("input[id=week]").value;
+      if (!table_id) return;
+      let table = document.querySelector(`div[id=${table_id}]`)?.innerHTML;
+      createPDF(table);
+    });
+
+    function createPDF(table) {
+      let sTable = table;
+
+      let style = "<style>";
+      style = style + "table {width: 100%;font: 17px Calibri;}";
+      style =
+        style +
+        "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+      style = style + "padding: 2px 3px;text-align: center;}";
+      style = style + "table tbody tr:nth-of-type(odd) { background: #EEEEEE;}";
+      style = style + "table thead tr { background: #000; color: white; }";
+      style = style + "</style>";
+
+      // CREATE A WINDOW OBJECT.
+      let win = window.open("", "", "height=700,width=700");
+
+      win.document.write("<html><head>");
+      win.document.write("<title>Profile</title>"); // <title> FOR PDF HEADER.
+      win.document.write(style); // ADD STYLE INSIDE THE HEAD TAG.
+      win.document.write("</head>");
+      win.document.write("<body>");
+      win.document.write(sTable); // THE TABLE CONTENTS INSIDE THE BODY TAG.
+      win.document.write("</body></html>");
+
+      win.document.close(); // CLOSE THE CURRENT WINDOW.
+
+      win.print(); // PRINT THE CONTENTS.
+    }
+  </script>
+</html>

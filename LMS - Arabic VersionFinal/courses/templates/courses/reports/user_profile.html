@@ -1,0 +1,275 @@
+{% extends '../main_screen.html' %}
+<!-- Styles -->
+{% block additionalStyles %}
+<style>
+  @import url(https://fonts.googleapis.com/css?family=Varela+Round);
+  @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700);
+
+  @media print {
+    div.list,
+    div.table-grid {
+      break-inside: avoid;
+    }
+  }
+  .profile {
+    font-family: "Open Sans", sans-serif;
+  }
+  .section-padding {
+    padding: 60px 60px 40px 40px;
+    height: 650px;
+  }
+  .profile-info--holder {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    grid-column-gap: 20px;
+  }
+  .bio-wrapper {
+    background: #fff;
+    color: #9099a0;
+  }
+  .bio {
+    display: flex;
+    flex-direction: column;
+  }
+  .bio-info-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    flex-wrap: wrap; /* To fit tiny-width screens */
+  }
+  .bio-info-row span {
+    margin-bottom: 10px;
+  }
+  .bio-left-cell {
+    font-weight: 600;
+    color: #4a4e51;
+  }
+  .bio-right-cell {
+    font-weight: 300;
+  }
+  .section-right {
+    background: #3d3e42;
+    color: #9099a0;
+    font-weight: 300;
+    overflow: auto;
+  }
+  .table-grid {
+    display: grid;
+    grid-template-columns: 30% 70%;
+    grid-template-rows: auto auto;
+    grid-column-gap: 20px;
+    grid-row-gap: 15px;
+    margin-bottom: 60px;
+  }
+  .list {
+    display: flex;
+    flex-direction: column;
+  }
+  .list > div {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .section-right h3.title-class {
+    color: #66cc99;
+    text-align: right;
+    text-transform: uppercase;
+    font-size: 1.2em;
+    margin-bottom: 20px;
+    font-weight: 400;
+  }
+  .section-right .title-class {
+    color: white;
+  }
+</style>
+{% endblock %}
+<!-- Body -->
+{% block body %}
+<!-- Print Functionality -->
+<div style="margin-left: 100px; margin-top: 30px">
+  <button type="button" id="print_btn" class="print-action">طباعة</button>
+</div>
+<!-- Profile detail -->
+<div class="profile">
+  {% if user %}
+  <!-- Card -->
+  <div class="table-wrapper profile-info--holder">
+    <!-- Left side -->
+    <section class="bio-wrapper section-padding">
+      <!-- <img src="" alt="" /> -->
+      <h1>{{ user.name }}</h1>
+      <div class="bio">
+        <div class="bio-info-row">
+          <span class="bio-left-cell">
+            <i class="fa-solid fa-briefcase"></i>
+            &nbsp;&nbsp; المصدر / العقد
+          </span>
+          <span class="bio-right-cell">{{ user.source.name }}</span>
+        </div>
+
+        <div class="bio-info-row">
+          <span class="bio-left-cell">
+            <i class="fa-solid fa-phone-flip fa-lg"></i>
+            &nbsp; الإتصال
+          </span>
+          <span class="bio-right-cell">{{ user.call }}</span>
+        </div>
+
+        <div class="bio-info-row">
+          <span class="bio-left-cell">
+            <i class="fa-regular fa-envelope fa-lg"></i>
+            &nbsp; الإيميل
+          </span>
+          <span class="bio-right-cell">{{ user.email }}</span>
+        </div>
+
+        <div class="bio-info-row">
+          <span class="bio-left-cell">
+            <i class="fa-solid fa-calendar-days fa-lg"></i>
+            &nbsp; تاريخ الميلاد
+          </span>
+          <span class="bio-right-cell">{{ user.birth_date }}</span>
+        </div>
+
+        <div class="bio-info-row">
+          <span class="bio-left-cell">
+            <i class="fa-solid fa-location-dot fa-lg"></i>
+            &nbsp; العنوان
+          </span>
+          <span class="bio-right-cell">{{ user.address }}</span>
+        </div>
+
+        <div class="bio-info-row">
+          <span class="bio-left-cell">
+            <i class="fa-regular fa-id-card fa-lg"></i>
+            &nbsp; الهوية
+          </span>
+          <span class="bio-right-cell">{{ user.identification }}</span>
+        </div>
+
+        <div class="bio-info-row">
+          <span class="bio-left-cell">
+            <i class="fa-solid fa-globe fa-lg"></i>
+            &nbsp; الجنسية
+          </span>
+          <span class="bio-right-cell">{{ user.nationality }}</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Right side -->
+    <section class="section-right section-padding">
+      <h3 class="title-class">الدرجات العلمية</h3>
+      {% for sci_degree in sci_degrees %}
+      <div class="list">
+        <div class="title-class">
+          <span>الدرجة العلمية: </span>
+          <span>{{ sci_degree.get_sci_degree_display }}</span>
+        </div>
+        <div class="title-class">
+          <span>الجهة التعليمية: </span>
+          <span>{{ sci_degree.educational_institution }}</span>
+        </div>
+        <div>
+          <span>التخصص: </span>
+          <span>{{ sci_degree.major }}</span>
+        </div>
+        <div>
+          <span>السنة المكتسبة: </span>
+          <span>{{ sci_degree.year_obtained }}</span>
+        </div>
+        <div>
+          <span>التقدير: </span>
+          <span>{{ sci_degree.grade }}</span>
+        </div>
+      </div>
+      {% endfor %}
+      <hr />
+
+      <h3 class="title-class">الخبرات</h3>
+      {% for exp in experiences %}
+      <div class="table-grid">
+        <div class="title-class">{{ exp.company_name }}</div>
+        <div class="title-class">{{ exp.role }}</div>
+        <p>{{ exp.start_date }} - {{ exp.end_date }}</p>
+        <p>{{ exp.description }}</p>
+      </div>
+      {% endfor %}
+      <hr />
+
+      <h3 class="title-class">الشهادات</h3>
+      {% for certif in certificates %}
+      <div class="list">
+        <div class="title-class">
+          <span>الشهادة: </span>
+          <span>{{ certif.certificate }}</span>
+        </div>
+        <div class="title-class">
+          <span>المزوّد: </span>
+          <span>{{ certif.certif_provider }}</span>
+        </div>
+        <div>
+          <span>السنة المكتسبة: </span>
+          <span>{{ certif.year_obtained }}</span>
+        </div>
+        <div>
+          <span>الصلاحية: </span>
+          <span>{{ certif.get_validity_display }}</span>
+        </div>
+      </div>
+      {% endfor %}
+      <hr />
+
+      <h3 class="title-class">التدريبات / الدورات</h3>
+      {% for crs in training_courses %}
+      <div class="table-grid">
+        <div class="title-class">{{ crs.name }}</div>
+        <div class="title-class">{{ crs.party }}</div>
+        <p>{{ crs.start_date }} - {{ crs.end_date }}</p>
+        <p>{{ crs.description }}</p>
+      </div>
+      {% endfor %}
+    </section>
+  </div>
+
+  {% else %}
+  <h2>لا توجد بيانات</h2>
+  {% endif %}
+</div>
+<script>
+  // Print Functionality
+  document.querySelector("#print_btn").addEventListener("click", function () {
+    const table = document.querySelector(".table-wrapper").innerHTML;
+    createPDF(table);
+  });
+
+  function createPDF(table) {
+    let sTable = table;
+
+    // CREATE A WINDOW OBJECT
+    // let win = window.open("", "", "height=700,width=700");
+    // Instead of creating a window object, Create a document.
+    let win = new Document();
+
+    document.write("<html><head>");
+    document.write("<title>Profile</title>"); // <title> FOR PDF HEADER.
+    document.write(
+      // ADD EXTERNAL STYLE INSIDE THE HEAD TAG.
+      `<link rel='stylesheet' type='text/css' href='${location.origin}/static/css/report/user_profile_printable.css' />`
+    );
+    document.write("</head>");
+    document.write("<body>");
+    document.write(sTable); // THE TABLE CONTENTS INSIDE THE BODY TAG.
+    document.write("</body></html>");
+
+    document.close(); // CLOSE THE CURRENT WINDOW.
+
+    const linkEl = document.querySelector("[href*='user_profile_printable']");
+    linkEl.addEventListener("load", (_) => {
+      // console.log("LOADED");
+      // After the CSS load and applied =>
+      print(); // PRINT THE CONTENTS.
+    });
+  }
+</script>
+{% endblock %}

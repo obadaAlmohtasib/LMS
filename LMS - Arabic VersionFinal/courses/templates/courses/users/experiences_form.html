@@ -1,0 +1,68 @@
+{% load static %}
+<div class="experiences-wrapper">
+  <div>
+    <button type="button" class="add-experience-btn experience-button">
+      +
+    </button>
+    <span>إضافة خبرة</span>
+  </div>
+
+  <section class="experiences-container">
+    <!-- In case of editing -->
+    {% for exp in experiences_forms %}
+    <div class="experience">{{ exp.as_p }}</div>
+    {% endfor %}
+    <!-- <div class="experience">
+    <p>
+      <label for="company_name_id">Company name: </label>
+      <input type="text" id="company_name_id" name="company-name" required />
+    </p>
+
+    <p>
+      <label for="role_id">Role: </label>
+      <input type="text" id="role_id" name="role" required />
+    </p>
+
+    <p>
+      <label for="start_date_id">Start date: </label>
+      <input type="date" id="start_date_id" name="start-date" required />
+    </p>
+
+    <p>
+      <label for="end_date_id">End date: </label>
+      <input type="date" id="end_date_id" name="end-date" required />
+    </p>
+
+    <p>
+      <label for="description_id">Description: </label>
+      <input type="text" id="description_id" name="description" required />
+    </p>
+  </div> -->
+  </section>
+  <div style="display: none">
+    <button type="button" class="remove-experience-btn experience-button">
+      -
+    </button>
+    <span>حذف الخبرة</span>
+  </div>
+</div>
+<script src="{% static 'js/user_forms/experiences_form_handler.js' %}"></script>
+<script>
+  const expForms = document.querySelectorAll(".experience");
+  // for each experience
+  expForms.forEach((el, index) => {
+    el.classList.replace("experience", `experience-${index + 1}`);
+
+    // for each input
+    const inputs = el.querySelectorAll("input, textarea, select");
+    inputs.forEach((inp) => {
+      inp.name = inp.name.replace("_", "-");
+      inp.name += `-${index + 1}`;
+    });
+
+    // remove the select "user" field
+    // [name*=user] will match all names containing user.
+    const userSelect = el.querySelector("p > select[name*=user]");
+    userSelect.parentElement.remove();
+  });
+</script>

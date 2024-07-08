@@ -1,0 +1,133 @@
+{% extends '../main_screen.html' %}
+<!-- Load... -->
+{% load static %}
+<!-- Styles -->
+{% block additionalStyles %}
+<link href="{% static 'css/create_report_page.css' %}" rel="stylesheet" />
+{% endblock %}
+<!-- Body -->
+{% block body %}
+<div class="head-title">
+  <h1>{{ title|default:"تفاصيل الدورات" }}</h1>
+</div>
+<form class="container">
+  <div class="select-container">
+    <div>
+      <label class="select" for="slct_1">
+        <select id="slct_1" name="institution" required="required">
+          <option value="" disabled="disabled" selected="selected">
+            إختر القسم
+          </option>
+          {% for inst in institutions %}
+          <option value="{{inst.id}}">{{inst.name}}</option>
+          {% endfor %}
+        </select>
+        <svg>
+          <use xlink:href="#select-arrow-down"></use>
+        </svg>
+      </label>
+    </div>
+
+    <div>
+      <label class="select" for="slct_2">
+        <select id="slct_2" name="course" required="required">
+          <option value="" disabled="disabled" selected="selected">
+            إختر الدورة
+          </option>
+          <!-- Wait user to select institution -->
+        </select>
+        <svg>
+          <use xlink:href="#select-arrow-down"></use>
+        </svg>
+      </label>
+    </div>
+
+    <!-- SVG Sprites-->
+    <svg class="sprites">
+      <symbol id="select-arrow-down" viewbox="0 0 10 6">
+        <polyline points="1 1 5 5 9 1"></polyline>
+      </symbol>
+    </svg>
+  </div>
+
+  <div class="buttons-container">
+    <button
+      type="submit"
+      formaction="{% url 'get_topics?course_id=&&course_name=' 0 'xxx' %}"
+      id="view_course_details_link"
+    >
+      عرض تفاصيل الدورات
+    </button>
+  </div>
+</form>
+
+<!-- Dynamic -->
+<script>
+  //
+  // Elements
+  const institutionList = document.querySelector("select[name=institution]");
+  const courseList = document.querySelector("select[name=course]");
+  const viewCourseDetailsLink = document.querySelector(
+    "#view_course_details_link"
+  );
+
+  //
+  // Handlers
+  institutionList.addEventListener("change", function () {
+    id = this.value;
+    if (!id) return;
+    fetchRelatedCourses(id);
+  });
+  courseList.addEventListener("change", function () {
+    const id = this.value;
+    if (!id) return;
+    const formAction = new String(viewCourseDetailsLink.formAction);
+    const name = this.options[this.selectedIndex].textContent;
+    const href = formAction.replace(
+      // /(course_id=)([0-9]+)(&&course_name=)([A-Za-z]+)/g, // "Fatal Bug", because it gonna mismatch any arabic letter.
+      /(course_id=)([0-9]+)(&&course_name=)(.*)/g,
+      `course_id=${id}&&course_name=${encodeURI(name)}`
+    );
+    viewCourseDetailsLink.formAction = href;
+  });
+
+  function fetchRelatedCourses(instId) {
+    return new Promise(async (resolve, reject) => {
+      const res = await fetch(
+        `${location.origin}/${instId}/get_related_courses`,
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        }
+      );
+      const data = await res.json();
+      if (data["status_code"] === 200) {
+        let { courses } = data.data;
+        fillCourseList(courses);
+        resolve();
+      } else {
+        reject();
+      }
+    });
+  }
+
+  function fillCourseList(courses) {
+    courseList.innerHTML = "";
+    let markup = `
+    <option value="" disabled="disabled" selected="selected">
+        إختر الدورة
+    </option>
+  `;
+    courses.forEach((course) => {
+      markup += `
+          <option value=${course[0]}>${course[1]}</option>
+        `;
+    });
+    courseList.insertAdjacentHTML("beforeend", markup);
+  }
+</script>
+
+{% endblock %}

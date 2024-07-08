@@ -1,0 +1,169 @@
+.grid-container {
+  display: grid;
+  grid-template-columns: auto 300px;
+  grid-template-rows: auto auto auto;
+  row-gap: 10px;
+  column-gap: 10px;
+  margin-right: 10px;
+}
+.top-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.top-header h1 {
+  width: 100%;
+  text-align: center;
+}
+.toggle-switch-section {
+  min-width: 300px;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto auto;
+  row-gap: 22px;
+  margin-right: 10px;
+}
+.progress-bar {
+  display: flex;
+  width: 100%;
+  justify-content: end;
+  align-items: end;
+  grid-column-end: span 2;
+}
+.table-wrapper {
+  grid-column: 1 / 1;
+  grid-row: 1 / span 3;
+  margin: 0px;
+  overflow: auto;
+}
+.card {
+  width: 300px;
+  height: 300px;
+  background-color: snow;
+  border-radius: 4.2px;
+  box-shadow: 0px 3px 10px -2px rgba(0, 0, 0, 0.2);
+  overflow-y: auto;
+  direction: rtl;
+}
+.card .header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #f9f9f9;
+  border: 1px solid #e5e5e5;
+  border-radius: 4.2px;
+}
+.card .header h2 {
+  width: 100%;
+  padding: 1em;
+  line-height: 1.4;
+  text-align: start;
+  text-transform: capitalize;
+  color: #f0a500;
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0px;
+}
+.card .header a {
+  padding: 1em;
+  color: -webkit-link;
+  cursor: pointer;
+  text-decoration: underline;
+}
+.card h4 {
+  text-align: center;
+}
+
+/* Card Form */
+.card .hidden {
+  display: none;
+}
+.card form {
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 14px;
+}
+.card form p {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+label {
+  color: #f0a500;
+  font-weight: bold;
+}
+input {
+  width: 70%;
+  padding: 1em;
+  line-height: 1.4;
+  /* background-color: #f9f9f9; */
+  border: 1px solid #e5e5e5;
+  border-radius: 3px;
+}
+
+/* Public Holidays Card */
+.public-holiday-info-wrapper {
+  display: grid;
+  grid-template-columns: 40% 40% auto;
+  grid-template-rows: auto auto;
+  gap: 2px;
+  border-bottom: 1px solid #e5e5e5;
+}
+.public-holiday-event {
+  grid-row: 1 / span 2;
+  border-right: 1px solid rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.public-holiday-date-range {
+  border-right: 1px solid rgba(0, 0, 0, 0.3);
+}
+.public-holiday-date {
+  text-align: center;
+}
+.public-holiday-info-wrapper div:last-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Course Group Card */
+.timings-info-wrapper,
+.course-groups-info-wrapper {
+  display: grid;
+  grid-template-columns: 50% 1fr;
+  align-items: center;
+  border-bottom: 1px solid #e5e5e5;
+  padding-left: 14px;
+  padding-right: 14px;
+}
+.timings-actions,
+.course-groups-actions {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Scrollbar */
+/* Works on Firefox */
+.card,
+.table-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: blue orange;
+}
+/* Works on Chrome, Edge, and Safari */
+.card::-webkit-scrollbar,
+.table-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+.card::-webkit-scrollbar-track,
+.table-wrapper::-webkit-scrollbar-track {
+  background: orange;
+}
+.card::-webkit-scrollbar-thumb,
+.table-wrapper::-webkit-scrollbar-thumb {
+  background-color: blue;
+  border-radius: 20px;
+  border: 2px solid orange;
+}

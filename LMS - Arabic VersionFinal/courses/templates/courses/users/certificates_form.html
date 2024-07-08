@@ -1,0 +1,67 @@
+{% load static %}
+<div class="certificates-wrapper">
+  <div>
+    <button type="button" class="add-certificate-btn certificate-button">
+      +
+    </button>
+    <span>إضافة شهادة</span>
+  </div>
+
+  <section class="certificates-container">
+    <!-- In case of editing -->
+    {% for certif in certificates_forms %}
+    <div class="certificate">{{ certif.as_p }}</div>
+    {% endfor %}
+    <!-- <div class="certificate">   
+    <p>
+      <label for="id_certificate">Certificate:</label>
+      <input type="text" name="certificate" maxlength="128" required id="id_certificate">
+    </p>
+
+    <p>
+      <label for="id_certif_provider">Certif provider:</label>
+      <input type="text" name="certif-provider" maxlength="128" required id="id_certif_provider">
+    </p>
+
+    <p>
+      <label for="id_year_obtained">Year obtained:</label>
+      <input type="number" name="year-obtained" required id="id_year_obtained">
+    </p>
+
+    <p>
+      <label for="id_validity">Validity:</label>
+      <select name="validity" required id="id_validity">
+        <option value="" selected>---------</option>
+        <option value="-1">For Ever</option>
+        <option value="1">One Year</option>
+        <option value="5">Five Years</option>
+      </select>
+    </p>
+  </div> -->
+  </section>
+  <div style="display: none">
+    <button type="button" class="remove-certificate-btn certificate-button">
+      -
+    </button>
+    <span>حذف الشهادة</span>
+  </div>
+</div>
+<script src="{% static 'js/user_forms/certificates_form_handler.js' %}"></script>
+<script>
+  const certifForms = document.querySelectorAll(".certificate");
+  // for each certificate form
+  certifForms.forEach((el, index) => {
+    el.classList.replace("certificate", `certificate-${index + 1}`);
+
+    // for each input
+    const inputs = el.querySelectorAll("input, textarea, select");
+    inputs.forEach((inp) => {
+      inp.name = inp.name.replace("_", "-");
+      inp.name = `c-${inp.name}-${index + 1}`;
+    });
+
+    // remove the select "user" field
+    const userSelect = el.querySelector("p > select[name*=user]");
+    userSelect.parentElement.remove();
+  });
+</script>

@@ -1,0 +1,110 @@
+{% extends '../main_screen.html' %}
+<!-- Load... -->
+{% load static %}
+<!-- Styles -->
+{% block additionalStyles %}
+<link href="{% static 'css/create_report_page.css' %}" rel="stylesheet" />
+{% endblock %}
+<!-- Body -->
+{% block body %}
+<div class="head-title">
+  <h1>{{ title|default:"الملف الشخصي" }}</h1>
+</div>
+<form class="container">
+  <div class="select-container">
+    <div>
+      <label class="select" for="slct_1">
+        <select id="slct_1" name="u-source" required="required">
+          <option value="" disabled="disabled" selected="selected">
+            إخترالمصدر
+          </option>
+          {% for u_source in user_sources %}
+          <option value="{{ u_source.id }}">{{ u_source.name }}</option>
+          {% endfor %}
+        </select>
+        <svg>
+          <use xlink:href="#select-arrow-down"></use>
+        </svg>
+      </label>
+    </div>
+
+    <div>
+      <label class="select" for="slct_2">
+        <select id="slct_2" name="user" required="required">
+          <option value="" disabled="disabled" selected="selected">
+            إختر المدرّب
+          </option>
+          {% for user in users %}
+          <option value="{{ user.id }}">{{user.name}}</option>
+          {% endfor %}
+        </select>
+        <svg>
+          <use xlink:href="#select-arrow-down"></use>
+        </svg>
+      </label>
+    </div>
+
+    <!-- SVG Sprites-->
+    <svg class="sprites">
+      <symbol id="select-arrow-down" viewbox="0 0 10 6">
+        <polyline points="1 1 5 5 9 1"></polyline>
+      </symbol>
+    </svg>
+  </div>
+
+  <div class="buttons-container">
+    <button
+      type="submit"
+      formaction="{% url 'user-profile' %}"
+      id="get_user_profile_link"
+    >
+      الملف الشخصي
+    </button>
+  </div>
+</form>
+
+<!-- Dynamic -->
+<script>
+  //
+  // Elements
+  const userSourceList = document.querySelector("select[name=u-source]");
+  const userList = document.querySelector("select[name=user]");
+  const getUserProfileLink = document.querySelector("#get_user_profile_link");
+
+  //
+  // Handlers
+  userSourceList.addEventListener("change", async function (e) {
+    let value = this.value;
+    if (!value) return;
+
+    await filterUsers(value);
+  });
+  function filterUsers(source) {
+    return new Promise(async (resolve, reject) => {
+      const res = await fetch(`${location.origin}/${source}/users`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+      });
+      const data = await res.json();
+      if (data["status_code"] === 200) {
+        const { users } = data.data;
+        fillUsersList(users);
+        resolve();
+      } else {
+        reject("No data fetched");
+      }
+    });
+  }
+  function fillUsersList(users) {
+    userList.innerHTML = "";
+    let markup = "<option value selected>---------</option>";
+    users.forEach((user) => {
+      markup += `<option value=${user[0]}>${user[1]}</option>`;
+    });
+    userList.insertAdjacentHTML("beforeend", markup);
+  }
+</script>
+{% endblock %}

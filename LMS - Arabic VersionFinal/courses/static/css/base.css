@@ -1,0 +1,53 @@
+html {
+  font-size: 18px;
+}
+
+.buttons-holder {
+  display: flex;
+  justify-content: flex-start;
+  gap: 10px;
+}
+
+.save-submit,
+.update-submit,
+.cancel-action,
+.reset-action,
+.print-action {
+  font-size: 20px;
+  padding: 12px 28px;
+  border: 2px solid #4caf50;
+  background-color: #e5e3c9;
+  transition-duration: 0.4s;
+}
+
+.save-submit:hover,
+.update-submit:hover,
+.cancel-action:hover,
+.reset-action:hover,
+.print-action:hover {
+  background-color: #599859;
+  color: white;
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24),
+    0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+
+.save-submit,
+.update-submit {
+  /**/
+}
+
+.cancel-action {
+  /**/
+}
+
+.reset-action {
+  /**/
+}
+
+.print-action {
+  /**/
+}
+
+.confirmation-link-holder h2 {
+  color: white;
+}

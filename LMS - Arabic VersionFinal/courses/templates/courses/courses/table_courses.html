@@ -1,0 +1,75 @@
+{% extends '../main_screen.html' %}
+<!-- Load... -->
+{% load static %}
+<!-- Body -->
+{% block body %}
+<div>
+  <div class="head-title">
+    <h1><span dir="auto">{{ title }}</span> الدورات لِقِسم</h1>
+  </div>
+  <div class="table-wrapper">
+    <a href="{% url 'create_course' id %}" class="add-row">إضافة دورة</a>
+    {% if data %}
+    <table class="fl-table table-margin-top">
+      <thead>
+        <tr>
+          <th>التسلسل</th>
+          <th>الدورة</th>
+          <th>عدد الحصص الكلي</th>
+          <th>عدد الحصص اليومي</th>
+          <th>تاريخ البداية</th>
+          <th>تاريخ النهاية</th>
+          <th>الحالة</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for model in data %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ model.name }}</td>
+          <td>{{ model.no_of_classes }}</td>
+          <td>{{ model.no_daily_classes }}</td>
+          <td>{{ model.start_date }}</td>
+          <td>{{ model.end_date }}</td>
+          <td>{{ model.status }}</td>
+          <td data-model-id="{{ model.id }}" data-model-name="{{ model.name }}">
+            <!-- params are passed in order -->
+            <!-- <a
+              href="{% url 'get_topics?course_id=&&course_name=' model.id model.name %}"
+              >VIEW</a
+            > -->
+            <a href="{% url 'edit_course' model.id %}">تعديل</a>
+            <a id="delete_link" href="#">حذف</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <h2>لا توجد دورات</h2>
+    {% endif %}
+  </div>
+</div>
+<script>
+  document.querySelector(".fl-table").addEventListener("click", async (e) => {
+    let el = e.target;
+    if (el.id !== "delete_link") return;
+    let { modelId, modelName } = el?.closest("td").dataset;
+    if (el && confirm(`Are you sure that you want to delete? ${modelName}`)) {
+      e.preventDefault();
+      let res = await fetch(`${location.origin}/${modelId}/delete_course`, {
+        method: "delete",
+        headers: {
+          "X-CSRFTOKEN": "{{ csrf_token }}",
+          "Content-Type": "application/json",
+        },
+      });
+      let data = await res.json();
+      if (data.status_code === 204) {
+        el.closest("tr").remove();
+      }
+    }
+  });
+</script>
+{% endblock %}

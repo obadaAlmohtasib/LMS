@@ -1,0 +1,61 @@
+{% extends '../main_screen.html' %}
+<!-- Body -->
+{% block body %}
+<div>
+  <div class="head-title">
+    <h1>{{ title|default:"المدرّبين" }}</h1>
+  </div>
+  <div class="table-wrapper">
+    <a href="{% url 'create_user' %}" class="add-row">إضافة مدرب</a>
+    {% if data %}
+    <table class="fl-table table-margin-top">
+      <thead>
+        <tr>
+          <th>التسلسل</th>
+          <th>الإسم</th>
+          <th>المصدر</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for model in data %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ model.name }}</td>
+          <td>{{ model.source.name }}</td>
+          <td data-model-id="{{ model.id }}" data-model-name="{{ model.name }}">
+            <!-- <a id="view_link" href="#">VIEW</a> -->
+            <a id="edit_link" href="{% url 'edit_user' model.id %}">تعديل</a>
+            <a id="delete_link" href="#">حذف</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <h2>لا توجد بيانات مدرّبين</h2>
+    {% endif %}
+  </div>
+</div>
+<script>
+  document.querySelector(".fl-table")?.addEventListener("click", async (e) => {
+    let el = e.target;
+    if (el.id !== "delete_link") return;
+    let { modelId, modelName } = el?.closest("td").dataset;
+    if (el && confirm(`Are you sure that you want to delete? ${modelName}`)) {
+      e.preventDefault();
+      let res = await fetch(`${location.origin}/${modelId}/delete_user`, {
+        method: "delete",
+        headers: {
+          "X-CSRFTOKEN": "{{ csrf_token }}",
+          "Content-Type": "application/json",
+        },
+      });
+      let data = await res.json();
+      if (data.status_code === 204) {
+        el.closest("tr").remove();
+      }
+    }
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends '../add_entity_template.html' %}
+<!-- Body -->
+{% block body %}
+<div>
+  <div>
+    {% if success %}
+    <h2>تم إضافة توقيت جديد بنجاح</h2>
+    <div class="confirmation-link-holder">
+      <h2>
+        للرجوع إلى القائمة السابقة إضغط
+        <a
+          href="{% url 'get_topics?course_id=&&course_name=' course.id course.name %}"
+          >هنا</a
+        >
+      </h2>
+    </div>
+    {% else %}
+    <div class="container">
+      <form action="{% url 'add_timing' id %}" method="post" autocomplete="off">
+        <h2>إضافة توقيت</h2>
+        {% csrf_token %} {{ timing_form.as_p }}
+        <!-- Start -->
+        {{ class_schedule_formset.management_form }}
+        <!-- child forms -->
+        {%for form_b in class_schedule_formset%}
+        <hr />
+        {{ form_b.as_p }}
+        <!-- End -->
+        {%endfor%}
+        <div class="buttons-holder">
+          <button type="submit" class="save-submit">إضافة</button>
+          <a
+            href="{% url 'get_topics?course_id=&&course_name=' course.id course.name %}"
+            class="cancel-action"
+            >إلغاء</a
+          >
+          <button type="reset" class="reset-action">مسح</button>
+        </div>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

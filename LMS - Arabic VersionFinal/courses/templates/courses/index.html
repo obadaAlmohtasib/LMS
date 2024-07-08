@@ -1,0 +1,22 @@
+{% extends './main_screen.html' %}
+<!-- load... -->
+{% load static %}
+<!-- Styles -->
+{% block additionalStyles %}
+<link href="{% static 'css/index.css' %}" rel="stylesheet" />
+{% endblock %}
+<!-- Body -->
+{% block body %}
+<!-- -->
+{% include './head.html' %}
+<!-- -->
+<div class="inner-body">
+  <!-- <div>
+    <img src="{% static 'image/logo.png' %}" alt="" height="400" width="400" />
+  </div>
+
+  <div class="app-title">
+    <h1>{{ title|default:"الصفحة الرئيسية" }}</h1>
+  </div> -->
+</div>
+{% endblock %}

@@ -1,0 +1,73 @@
+{% load static %}
+<div class="training-courses-wrapper">
+  <div>
+    <button
+      type="button"
+      class="add-training-course-btn training-course-button"
+    >
+      +
+    </button>
+    <span>إضافة دورة / تدريب</span>
+  </div>
+
+  <section class="training-courses-container">
+    <!-- In case of editing -->
+    {% for crs in training_courses_forms %}
+    <div class="training-course">{{ crs.as_p }}</div>
+    {% endfor %}
+    <!-- <div class="training-course">
+    <p>
+      <label for="id_name">Name:</label>
+      <input type="text" name="name" maxlength="128" required id="id_name">
+    </p>
+    
+    <p>
+      <label for="id_party">Party:</label>
+      <input type="text" name="party" maxlength="128" required id="id_party">
+    </p>
+      
+    <p>
+      <label for="id_start_date">Start date:</label>
+      <input type="text" name="start-date" required id="id_start_date">
+    </p>
+    
+    <p>
+      <label for="id_end_date">End date:</label>
+      <input type="text" name="end-date" required id="id_end_date">
+    </p>
+    
+    <p>
+      <label for="id_description">Description:</label>
+      <input type="text" name="description" required id="id_description">
+    </p>
+  </div> -->
+  </section>
+  <div style="display: none">
+    <button
+      type="button"
+      class="remove-training-course-btn training-course-button"
+    >
+      -
+    </button>
+    <span>حذف الدورة / التدريب</span>
+  </div>
+</div>
+<script src="{% static 'js/user_forms/training_courses_form_handler.js' %}"></script>
+<script>
+  const crsForms = document.querySelectorAll(".training-course");
+  // for each training course form
+  crsForms.forEach((el, index) => {
+    el.classList.replace("training-course", `training-course-${index + 1}`);
+
+    // for each input
+    const inputs = el.querySelectorAll("input, textarea, select");
+    inputs.forEach((inp) => {
+      inp.name = inp.name.replace("_", "-");
+      inp.name = `crs-${inp.name}-${index + 1}`;
+    });
+
+    // remove the select "user" field
+    const userSelect = el.querySelector("p > select[name*=user]");
+    userSelect.parentElement.remove();
+  });
+</script>

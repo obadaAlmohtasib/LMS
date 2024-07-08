@@ -1,0 +1,170 @@
+{% extends '../main_screen.html' %}
+<!-- Load... -->
+{% load custom_filters %}
+<!-- Load... -->
+{% load static %}
+<!-- Scripts -->
+{% block additionalScripts %}
+<!-- <script defer type="module" src="{% static 'js/daily_entries_handler.js' %}" ></script> -->
+{% endblock %}
+<!-- Body -->
+{% block body %}
+<style>
+  @media print {
+    tr {
+      break-inside: avoid;
+    }
+  }
+  .form-wrapper {
+    margin: 10px 70px 70px;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+  }
+  .hidden {
+    display: none;
+  }
+  .table-wrapper {
+    margin: 10px 0px 70px 70px;
+    box-shadow: 0px 35px 50px rgba(0, 0, 0, 0.2);
+    max-height: 700px;
+    overflow-y: auto;
+  }
+
+  /* Scrollbar */
+  /* Works on Firefox */
+  .table-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: blue orange;
+  }
+  /* Works on Chrome, Edge, and Safari */
+  .table-wrapper::-webkit-scrollbar {
+    width: 8px;
+  }
+  .table-wrapper::-webkit-scrollbar-track {
+    background: orange;
+  }
+  .table-wrapper::-webkit-scrollbar-thumb {
+    background-color: blue;
+    border-radius: 20px;
+    border: 2px solid orange;
+  }
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, auto);
+  }
+</style>
+<!-- 
+    
+-->
+<div>
+  <div class="head-title">
+    <h1>{{ title|default:"الإدخالات / الحصص اليومية" }}</h1>
+  </div>
+  <div style="margin-left: 100px">
+    <button type="button" id="print_btn" class="print-action">طباعة</button>
+  </div>
+
+  <div class="table-wrapper">
+    {% if data %}
+    <table class="fl-table">
+      <thead>
+        <tr>
+          <th>التسلسل</th>
+          <th>الدورة</th>
+          <th>المجموعة</th>
+          <th>الموضوع</th>
+          <th>التاريخ</th>
+          <th>التوقيت</th>
+          <th>المدرّبين</th>
+          <th>الحصة</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for model in data %}
+        <tr
+          data-model-id="{{ model.id }}"
+          data-course-id="{{ model.course_id }}"
+        >
+          <td>{{ forloop.counter }}</td>
+          <td data-value="course">{{ model.course.name }}</td>
+          <td data-value="course_group">{{ model.course_group.name }}</td>
+          <td data-value="topic">{{ model.topic.name }}</td>
+          <td>{{ model.entry_date }}</td>
+          <td data-value="timing">{{ model.timing.timing }}</td>
+          <td data-value="user">{{model.users.all|join_items|linebreaksbr}}</td>
+          <td data-value="class_schedule">{{ model.class_schedule }}</td>
+          <td>
+            <!-- <a id="clone_link" href="#">CLONE</a> -->
+            <a id="edit_link" href="{% url 'edit_daily_entry' model.id  %}"
+              >تعديل</a
+            >
+            <a id="delete_link" href="#">حذف</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <h2>لا يوجد حصص لهذا اليوم</h2>
+    {% endif %}
+  </div>
+</div>
+<script>
+  // Print Functionality
+  document.querySelector("#print_btn").addEventListener("click", function () {
+    const table = document.querySelector("table");
+    if (!table) return;
+    // Getting the rows in table.
+    const rows = table.rows;
+    // Count number of columns in a table row
+    const cells_count = rows[0].cells.length;
+
+    // Removing the column at index(-1).
+    var i = cells_count - 1;
+    for (var j = 0; j < rows.length; j++) {
+      // Deleting the ith cell of each row.
+      rows[j].deleteCell(i);
+    }
+
+    createPDF(`<table>${table.innerHTML}</table>`);
+  });
+
+  function createPDF(table) {
+    let sTable = table;
+
+    let style = "<style>";
+    // Media Print settings
+    style = style + "@media print { tr { break-inside: avoid; } }";
+
+    style =
+      style + "table { direction: rtl; width: 100%; font: 17px Calibri; }";
+    style =
+      style +
+      "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+    style = style + "padding: 2px 3px;text-align: center;}";
+    style = style + "table tbody tr:nth-of-type(odd) { background: #EEEEEE;}";
+    style = style + "table thead tr { background: #000; color: white; }";
+    style = style + "</style>";
+
+    // CREATE A WINDOW OBJECT
+    // let win = window.open("", "", "height=700,width=700");
+    // Instead of creating a window object, Create a document.
+    let win = new Document();
+
+    document.write("<html><head>");
+    document.write("<title>Profile</title>"); // <title> FOR PDF HEADER.
+    document.write(style); // ADD STYLE INSIDE THE HEAD TAG.
+    document.write("</head>");
+    document.write("<body>");
+    document.write(sTable); // THE TABLE CONTENTS INSIDE THE BODY TAG.
+    document.write("</body></html>");
+
+    document.close(); // CLOSE THE CURRENT WINDOW.
+
+    print(); // PRINT THE CONTENTS.
+  }
+</script>
+{% endblock %}
