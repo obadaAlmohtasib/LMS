@@ -1,0 +1,17 @@
+/* body {
+  position: relative;
+} */
+
+.app-body {
+  margin-right: 70px;
+}
+
+.header {
+  display: flex;
+  justify-content: center;
+}
+
+.space {
+  height: 50px;
+  width: 1px;
+}

@@ -1,0 +1,15 @@
+<div class="checkbox-field">
+  <input
+    id="status_chk"
+    class="l"
+    type="checkbox"
+    data-course-id="{{ id }}"
+    checked
+  />
+  <label for="status_chk"></label>
+</div>
+{% if suspended %}
+<script>
+  document.querySelector("#status_chk").removeAttribute("checked");
+</script>
+{% endif %}

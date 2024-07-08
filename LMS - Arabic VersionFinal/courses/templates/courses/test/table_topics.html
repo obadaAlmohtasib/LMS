@@ -1,0 +1,43 @@
+{% extends './main_screen.html' %}
+<!-- -->
+{% block body %}
+<div>
+  <div class="head-title">
+    <h1>{{ title|default:"المواضيع" }}</h1>
+  </div>
+  <div class="table-wrapper">
+    <a href="{% url 'create_topic' id %}">Create New</a>
+    {% if data %}
+    <table class="fl-table">
+      <thead>
+        <tr>
+          <th>Id</th>
+          <th>Name</th>
+          <th>No. Classes</th>
+          <th>Type</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for model in data %}
+        <tr>
+          <td>{{ model.id }}</td>
+          <td>{{ model.name }}</td>
+          <td>{{ model.no_of_classes }}</td>
+          <td>{{ model.get_t_type_display }}</td>
+          <td>
+            <a href="#">VIEW</a>
+            <a href="#">EDIT</a>
+            <a href="#">DELETE</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <h2>لا توجد مواضيع</h2>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

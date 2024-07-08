@@ -1,0 +1,96 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="google" value="notranslate" />
+    <title>Courses Management System</title>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/base.css' %}" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'css/table.css' %}"
+    />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/menu.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/head.css' %}" />
+    <link rel="stylesheet" type="text/css" href="{% static 'css/app.css' %}" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'css/footer.css' %}"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+      integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+    {% block additionalStyles %} {% endblock %}
+    <!-- -->
+    {% block additionalScripts %} {% endblock %}
+  </head>
+  <body>
+    {% include './side_sliding_menu.html' %}
+    <!-- Body -->
+    <div class="app-body">
+      <!-- You can include 'head.html' here, to unify pages. -->
+      <div class="header">
+        <img
+          src="{% static 'image/logo.png' %}"
+          alt=""
+          height="150"
+          width="150"
+        />
+      </div>
+      <!-- -->
+      {% block body %} {% endblock %}
+    </div>
+    <div class="space"></div>
+    <div class="footer">
+      <nav>
+        <ul class="footer-list">
+          <li class="footer-list-item">
+            <a href="{% url 'index' %}">الصفحة الرئيسية</a>
+          </li>
+          <li class="footer-list-item">
+            <a href="{% url 'get_users' %}">المدرّبين</a>
+          </li>
+          <li class="footer-list-item">
+            <a href="{% url 'user-sources-list' %}">جهات العمل</a>
+          </li>
+          <li class="footer-list-item">
+            <a href="{% url 'get_institutions' %}">الأقسام</a>
+          </li>
+          <li class="footer-list-item">
+            <a href="{% url 'courses-land-page' %}">الدورات</a>
+          </li>
+          <li class="footer-list-item">
+            <a href="{% url 'copy-course-page' %}">نسخ الدورات</a>
+          </li>
+          <li class="footer-list-item">
+            <a href="{% url 'course-details-land-page' %}">تفاصيل الدورات</a>
+          </li>
+          <li class="footer-list-item">
+            <a href="{% url 'get_daily_entries' %}">الحصص اليومية</a>
+          </li>
+          <li class="footer-list-item">
+            <a href="{% url 'create_report' %}">جداول الدورات</a>
+          </li>
+          <li class="footer-list-item">
+            <a href="{% url 'create_general_report' %}">الجداول الأسبوعية</a>
+          </li>
+          <li class="footer-list-item">
+            <a href="{% url 'user-selection-page' %}">الملف الشخصي</a>
+          </li>
+          <li class="footer-list-item">
+            <a href="{% url 'users-month-selection-page' %}"
+              >ورقة العمل الشهرية</a
+            >
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </body>
+</html>

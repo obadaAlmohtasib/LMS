@@ -1,0 +1,72 @@
+@page {
+  size: A4 landscape;
+  margin: 0mm 0mm 0mm 0mm;
+}
+body {
+  background: transparent;
+}
+h2,
+.print-func-holder,
+.screen-view-h3 {
+  display: none;
+}
+.report-header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  /* display: grid;
+  grid-template-columns: 1fr auto 1fr; */
+}
+.report-header div:first-child {
+  /* background-color: red; */
+  flex-grow: 1;
+  flex-basis: 0;
+  text-align: start;
+}
+.report-header div:nth-child(2) {
+  display: flex;
+  align-items: center;
+}
+.report-header div:last-child {
+  /* background-color: red; */
+  flex-grow: 1;
+  flex-basis: 0;
+  text-align: end;
+}
+.table-page-container {
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 150px 1fr auto;
+}
+.table-wrapper {
+  /* box-shadow: 0px 35px 50px rgba(0, 0, 0, 0.2); */
+  box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+  height: fit-content;
+  margin: 0px;
+  /* box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px; */
+}
+table {
+  direction: rtl;
+}
+.fl-table tr:nth-child(even) {
+  background: transparent;
+}
+.fl-table thead th:nth-child(odd), /*Explicit to Override*/
+.fl-table thead th:nth-child(even) {
+  color: black;
+  background: transparent;
+  border: 1px solid black;
+}
+.fl-table td {
+  border-right: 2px dashed rgb(135, 132, 132);
+}
+.report-footer {
+  display: block;
+}
+.report-footer > div {
+  display: flex;
+  justify-content: start;
+}
+.report-footer pre {
+  white-space: pre-line;
+}

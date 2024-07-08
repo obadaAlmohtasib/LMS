@@ -1,0 +1,76 @@
+{% extends '../edit_entity_template.html' %}
+<!-- load... -->
+{% load static %}
+<!-- Scripts -->
+{% block additionalScripts %}
+<script
+  defer
+  type="module"
+  src="{% static 'js/create_entry_handler.js' %}"
+></script>
+{% endblock %}
+<!-- Body -->
+{% block body %}
+<div>
+  {% if success %}
+  <h2>تم إضافة حصة جديدة بنجاح</h2>
+  <div class="confirmation-link-holder">
+    <h2>
+      للرجوع إلى القائمة السابقة إضغط
+      <a href="{% url 'index' %}">هنا</a>
+    </h2>
+  </div>
+  {% else %}
+  <div class="form_container">
+    <div class="form-wrapper">
+      <form
+        class="form-grid hidden"
+        action="{% url 'create_daily_entry' %}"
+        method="POST"
+      >
+        <h2>تفاصيل الحصة</h2>
+        {% csrf_token %}
+        <input type="hidden" name="next" value="{{ callback_path }}" />
+        {{ form.as_p }}
+        <p>
+          <label for="id_repeat_times">عدد التكرار:</label>
+          <input
+            id="id_repeat_times"
+            type="number"
+            name="repeat_times"
+            min="1"
+            required
+          />
+        </p>
+        <div class="buttons-holder">
+          <button type="submit" class="save-submit">إضافة</button>
+          <a href="{{ callback_path }}" class="cancel-action">إلغاء</a>
+          <button type="reset" class="reset-action">مسح</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  {% endif %}
+</div>
+<script type="module">
+  //
+  // Limit select options to the group was selected
+  //
+  // import { fetchRelatedData } from "/static/js/create_entry_handler.js";
+  // variables' names accessed From above script
+  let courseList = document.querySelector("select[name='course']");
+  courseList.value = "{{ course_id }}";
+  // await fetchRelatedData(courseList.value);
+  let opt = courseList.options[courseList.selectedIndex];
+  courseList.innerHTML = "";
+  let markup = `<option value=${opt.value}>${opt.textContent}</option>`;
+  courseList.insertAdjacentHTML("beforeend", markup);
+
+  let groupList = document.querySelector("select[name='course_group']");
+  groupList.value = "{{ course_group_id }}";
+  opt = groupList.options[groupList.selectedIndex];
+  groupList.innerHTML = "";
+  markup = `<option value=${opt.value}>${opt.textContent}</option>`;
+  groupList.insertAdjacentHTML("beforeend", markup);
+</script>
+{% endblock %}

@@ -1,0 +1,38 @@
+html {
+  position: relative;
+  height: 100%;
+}
+
+.footer {
+  /* position: sticky; */
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  width: 100%;
+  justify-content: center;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: rgba(54, 110, 116, 0.82);
+}
+
+.footer-list {
+  direction: rtl;
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.footer-list-item {
+  display: inline-block;
+  color: white;
+}
+
+.footer-list-item a {
+  color: white;
+  text-decoration: none;
+}
+
+.footer-list-item a:hover {
+  text-decoration: underline;
+  color: blue;
+}

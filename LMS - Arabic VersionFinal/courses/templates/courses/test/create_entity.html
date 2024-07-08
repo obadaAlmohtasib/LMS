@@ -1,0 +1,25 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Courses Management System</title>
+    <link href="{% static 'css/entity_create_form.css' %}" rel="stylesheet" />
+  </head>
+  <body>
+    <div>
+      <div>
+        {% if success %}
+        <h2>New {{ entity_name }} Created Successfully</h2>
+        <a href="{% url 'index' %}">Go To Home Page.</a>
+        {% else %}
+        <div class="container">
+          <form action="{% url request_handler %}" method="post">
+            {% csrf_token %} {{ form.as_p }}
+            <button type="submit">ADD</button>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </body>
+</html>

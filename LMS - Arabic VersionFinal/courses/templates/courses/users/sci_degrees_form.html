@@ -1,0 +1,74 @@
+{% load static %}
+<div class="sci-degrees-wrapper">
+  <div>
+    <button type="button" class="add-sci-degree-btn sci-degree-button">
+      +
+    </button>
+    <span>إضافة درجة علمية</span>
+  </div>
+
+  <section class="sci-degrees-container">
+    <!-- In case of editing -->
+    {% for sci_degree in sci_degrees_forms %}
+    <div class="sci-degree">{{ sci_degree.as_p }}</div>
+    {% endfor %}
+    <!-- <div class="sci-degree">
+    <p>
+        <label for="id_sci_degree">Sci degree:</label>
+        <select name="sci-degree" required id="id_sci_degree">
+            <option value="" selected>---------</option>
+            <option value="HIGH_SCHOOL">HIGH_SCHOOL</option>
+            <option value="DIPLOMA">DIPLOMA</option>
+            <option value="BACHELOR">BACHELOR</option>
+            <option value="MASTER">MASTER</option>
+            <option value="DOCTORAL">DOCTORAL</option>
+        </select>
+    </p>
+
+    <p>
+        <label for="id_educational_institution">Educational institution:</label>
+        <input type="text" name="educational-institution" maxlength="128" required id="id_educational_institution">
+    </p>
+    
+    <p>
+        <label for="id_major">Major:</label>
+        <input type="text" name="major" maxlength="128" required id="id_major">
+    </p>
+
+    <p>
+        <label for="id_year_obtained">Year obtained:</label>
+        <input type="number" name="year-obtained" required id="id_year_obtained">
+    </p>
+
+    <p>
+        <label for="id_grade">Grade:</label>
+        <input type="number" name="grade" step="any" required id="id_grade">
+    </p>
+  </div> -->
+  </section>
+  <div style="display: none">
+    <button type="button" class="remove-sci-degree-btn sci-degree-button">
+      -
+    </button>
+    <span>حذف الدرجة العلمية</span>
+  </div>
+</div>
+<script src="{% static 'js/user_forms/sci_degrees_form_handler.js' %}"></script>
+<script>
+  const sciForms = document.querySelectorAll(".sci-degree");
+  // for each scientific degree
+  sciForms.forEach((el, index) => {
+    el.classList.replace("sci-degree", `sci-degree-${index + 1}`);
+
+    // for each input
+    const inputs = el.querySelectorAll("input, textarea, select");
+    inputs.forEach((inp) => {
+      inp.name = inp.name.replace("_", "-");
+      inp.name += `-${index + 1}`;
+    });
+
+    // remove the select "user" field
+    const userSelect = el.querySelector("p > select[name*=user]");
+    userSelect.parentElement.remove();
+  });
+</script>

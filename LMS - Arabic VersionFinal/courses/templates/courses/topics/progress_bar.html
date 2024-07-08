@@ -1,0 +1,19 @@
+<div class="skill">
+  <p>Release</p>
+  <div class="skill-bar skill1">
+    <span class="skill-count1">
+      {% if remaining_time %} after {{ remaining_time }} days {%endif%}
+    </span>
+  </div>
+</div>
+{% if suspended %}
+<script>
+  progressBar = document.querySelector(".progress-bar");
+  progressBar.style.display = "block";
+</script>
+{% else %}
+<script>
+  progressBar = document.querySelector(".progress-bar");
+  progressBar.style.display = "none";
+</script>
+{% endif %}

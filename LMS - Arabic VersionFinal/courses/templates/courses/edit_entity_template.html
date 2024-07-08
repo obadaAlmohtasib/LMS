@@ -1,0 +1,21 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Courses Management System</title>
+    <link href="{% static 'css/base.css' %}" rel="stylesheet" />
+    <link href="{% static 'css/entity_edit_form.css' %}" rel="stylesheet" />
+    {% block additionalStyles %} {% endblock %}
+    <!-- -->
+    {% block additionalScripts %} {% endblock %}
+  </head>
+  <body>
+    <div class="logo-header">
+      <img src="{% static 'image/logo.png' %}" />
+    </div>
+    <div>
+      <!-- -->
+      {% block body %} {% endblock %}
+    </div>
+  </body>
+</html>

@@ -1,0 +1,72 @@
+{% extends '../main_screen.html' %}
+<!-- Load... -->
+{% load static %}
+<!-- Styles -->
+{% block additionalStyles %}
+<link href="{% static 'css/create_report_page.css' %}" rel="stylesheet" />
+{% endblock %}
+<!-- Body -->
+{% block body %}
+<div class="head-title">
+  <h1>{{ title|default:"الدورات" }}</h1>
+</div>
+<form class="container">
+  <div class="select-container">
+    <div>
+      <label class="select" for="slct_1">
+        <select id="slct_1" name="institution" required="required">
+          <option value="" disabled="disabled" selected="selected">
+            إختر القسم
+          </option>
+          {% for inst in institutions %}
+          <option value="{{inst.id}}">{{inst.name}}</option>
+          {% endfor %}
+        </select>
+        <svg>
+          <use xlink:href="#select-arrow-down"></use>
+        </svg>
+      </label>
+    </div>
+
+    <!-- SVG Sprites-->
+    <svg class="sprites">
+      <symbol id="select-arrow-down" viewbox="0 0 10 6">
+        <polyline points="1 1 5 5 9 1"></polyline>
+      </symbol>
+    </svg>
+  </div>
+
+  <div class="buttons-container">
+    <button
+      type="submit"
+      formaction="{% url 'get_courses?institution_id=&&institution_name=' 0 'xxx' %}"
+      id="list_courses_link"
+    >
+      عرض الدورات
+    </button>
+  </div>
+</form>
+
+<!-- Dynamic -->
+<script>
+  //
+  // Elements
+  const institutionList = document.querySelector("select[name=institution]");
+  const listCoursesLink = document.querySelector("#list_courses_link");
+
+  //
+  // Handlers
+  institutionList.addEventListener("change", function () {
+    const id = this.value;
+    if (!id) return;
+    const formAction = new String(listCoursesLink.formAction);
+    const name = this.options[this.selectedIndex].textContent;
+    const href = formAction.replace(
+      // /(institution_id=)([0-9]+)(&&institution_name=)([A-Za-z]+)/g, // "Fatal Bug", because it gonna mismatch any arabic letter.
+      /(institution_id=)([0-9]+)(&&institution_name=)(.*)/g,
+      `institution_id=${id}&&institution_name=${encodeURI(name)}`
+    );
+    listCoursesLink.formAction = href;
+  });
+</script>
+{% endblock %}

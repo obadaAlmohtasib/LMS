@@ -1,0 +1,92 @@
+{% extends '../main_screen.html' %}
+<!-- Body -->
+{% block body %}
+<div>
+  <div class="head-title">
+    <h1>{{ title|default:"جهات العمل" }}</h1>
+  </div>
+  <div class="table-wrapper">
+    <a href="{% url 'user-sources' %}" class="add-row">إضافة جهة عمل</a>
+    {% if data %}
+    <table class="fl-table table-margin-top">
+      <thead>
+        <tr>
+          <th>التسلسل</th>
+          <th>اسم جهة العمل</th>
+          <th>التداخل</th>
+          <th>الإجراءات</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for model in data %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ model.name }}</td>
+          {% if model.can_oversee_multiple_classes %}
+          <td>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24"
+              width="21"
+              viewBox="0 0 448 512"
+            >
+              <path
+                d="M438.6 105.4c12.5 12.5 12.5 32.8 0 45.3l-256 256c-12.5 12.5-32.8 12.5-45.3 0l-128-128c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0L160 338.7 393.4 105.4c12.5-12.5 32.8-12.5 45.3 0z"
+              />
+            </svg>
+          </td>
+          {% else %}
+          <td>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              height="24"
+              width="18"
+              viewBox="0 0 384 512"
+            >
+              <path
+                d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"
+              />
+            </svg>
+          </td>
+          {% endif %}
+          <td data-model-id="{{ model.id }}" data-model-name="{{ model.name }}">
+            <!-- <a id="view_link" href="#">VIEW</a> -->
+            <a id="edit_link" href="{% url 'edit-user-source' model.id %}"
+              >تعديل</a
+            >
+            <a id="delete_link" href="#">حذف</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <h2>لا توجد بيانات جهات العمل</h2>
+    {% endif %}
+  </div>
+</div>
+<script>
+  document.querySelector(".fl-table")?.addEventListener("click", async (e) => {
+    let el = e.target;
+    if (el.id !== "delete_link") return;
+    let { modelId, modelName } = el?.closest("td").dataset;
+    if (el && confirm(`Are you sure that you want to delete? ${modelName}`)) {
+      e.preventDefault();
+      let res = await fetch(
+        `${location.origin}/${modelId}/delete-user-source`,
+        {
+          method: "delete",
+          headers: {
+            "X-CSRFTOKEN": "{{ csrf_token }}",
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      let data = await res.json();
+      if (data.status_code === 204) {
+        el.closest("tr").remove();
+      }
+    }
+  });
+</script>
+{% endblock %}

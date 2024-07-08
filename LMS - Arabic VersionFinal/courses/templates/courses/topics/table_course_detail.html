@@ -1,0 +1,214 @@
+{% extends '../main_screen.html' %}
+<!-- Load... -->
+{% load static %}
+<!-- Styles -->
+{% block additionalStyles %}
+<link
+  href="{% static 'css/course_details/table_course_detail.css' %}"
+  rel="stylesheet"
+/>
+<link
+  href="{% static 'css/course_details/toggle_switch.css' %}"
+  rel="stylesheet"
+/>
+<link
+  href="{% static 'css/course_details/progress_bar.css' %}"
+  rel="stylesheet"
+/>
+<link href="{% static 'css/course_details/modal.css' %}" rel="stylesheet" />
+{% endblock %}
+<!-- Scripts -->
+{% block additionalScripts %}
+<script defer src="{% static 'js/course_detail_handler.js' %}"></script>
+{% endblock %}
+<!-- Body -->
+{% block body %}
+<!--  
+    WRONG WAY:: ADDED in the body tag:: 
+    <link href="{% static 'css/table_course_detail.css' %}" /> 
+-->
+<div>
+  <div class="top-header">
+    <div class="head-title">
+      <h1><span dir="auto">{{ title }}</span> المواضيع لِدَورة</h1>
+    </div>
+  </div>
+  <div style="display: flex; justify-content: end">
+    <div class="toggle-switch-section">
+      <div class="toggle-switch">{% include './toggle_switch.html' %}</div>
+      <div>{% include './modal.html' %}</div>
+      <div class="progress-bar">{% include './progress_bar.html' %}</div>
+    </div>
+  </div>
+  <div class="grid-container">
+    <!-- Table -->
+    <div class="table-wrapper">
+      <a href="{% url 'create_topic' id %}" class="add-row">إضافة موضوع</a>
+      {% if topics %}
+      <table class="fl-table table-margin-top">
+        <thead>
+          <tr>
+            <th>التسلسل</th>
+            <th>الموضوع</th>
+            <th>عدد الحصص</th>
+            <th>التصنيف</th>
+            <th>الإجراءات</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for topic in topics %}
+          <tr>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ topic.name }}</td>
+            <td>{{ topic.no_of_classes }}</td>
+            <td>{{ topic.get_t_type_display }}</td>
+            <td
+              data-model-id="{{ topic.id }}"
+              data-model-name="{{ topic.name }}"
+            >
+              <!-- <a href="#">VIEW</a> -->
+              <a href="{% url 'edit_topic' topic.id %}">تعديل</a>
+              <a id="delete_topic_link" href="#">حذف</a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <h2>لم يتم إضافة مواضيع</h2>
+      {% endif %}
+    </div>
+
+    <!-- Card #1 -->
+    <!-- Public Holidays -->
+    <div class="card card-public-holidays">
+      <div class="header">
+        <h2>الإجازات الرسمية / الطارئة</h2>
+        <a id="form_toggler"> أضف </a>
+      </div>
+      <div class="card-body">
+        {% if public_holidays %}
+        <!-- -->
+        {% for model in public_holidays %}
+        <div class="public-holiday-info-wrapper">
+          <div class="public-holiday-event">
+            <p>{{ model.event_name }}</p>
+          </div>
+          <div class="public-holiday-date-range">
+            <p class="public-holiday-date"><b>{{ model.start_date }}</b></p>
+            <p class="public-holiday-date"><b>TO</b></p>
+            <p class="public-holiday-date"><b>{{ model.end_date }}</b></p>
+          </div>
+          <div>
+            <a
+              id="delete_public_holiday_link"
+              data-model-id="{{model.id}}"
+              data-model-name="{{model.event_name}}"
+              href="#"
+              >حذف</a
+            >
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <h4>لا توجد إجازات</h4>
+        {% endif %}
+      </div>
+      <form
+        class="hidden public-holidays-form"
+        action="{% url 'add_public_holiday' id %}"
+        method="POST"
+      >
+        {% csrf_token %} {{ public_holidays_form.as_p }}
+        <button type="submit" class="save_btn">حفظ</button>
+        <button type="reset" class="cancel_btn">إلغاء</button>
+      </form>
+    </div>
+
+    <!-- Card #2 -->
+    <!-- Timing -->
+    <div class="card card-timings">
+      <div class="header">
+        <h2>التوقيت</h2>
+        <!-- <a id="form_toggler"> ADD </a> -->
+        <a href="{% url 'add_timing' id %}"> أضف </a>
+      </div>
+      <div class="card-body">
+        {% if timings %}
+        <!-- -->
+        {% for model in timings %}
+        <div class="timings-info-wrapper">
+          <div class="timing-name">
+            <p>{{ model.timing }}</p>
+          </div>
+          <div class="timings-actions">
+            <a id="edit_timing_link" href="{% url 'edit_timing' model.id %}"
+              >تعديل</a
+            >
+            <a
+              id="delete_timing_link"
+              data-model-id="{{ model.id }}"
+              data-model-name="{{ model.timing }}"
+              href="#"
+              >حذف</a
+            >
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <h4>لم يتم إنشاء توقيت</h4>
+        {% endif %}
+      </div>
+      <form class="hidden" method="POST">{% csrf_token %}</form>
+    </div>
+
+    <!-- Card #3 -->
+    <!-- Course Groups -->
+    <div class="card card-course-groups">
+      <div class="header">
+        <h2>المجموعات</h2>
+        <a id="form_toggler"> أضف </a>
+      </div>
+      <div class="card-body">
+        {% if course_groups %}
+        <!-- -->
+        {% for model in course_groups %}
+        <div class="course-groups-info-wrapper">
+          <div class="course-group-name">
+            <p>{{ model.name }}</p>
+          </div>
+          <div class="course-groups-actions">
+            <a
+              id="view_course_group_link"
+              href="{% url 'view_course_group' model.id %}"
+              >عرض</a
+            >
+            <a
+              id="edit_course_group_link"
+              href="{% url 'edit_course_group' model.id %}"
+              >تعديل</a
+            >
+            <a
+              id="delete_course_group_link"
+              data-model-id="{{ model.id }}"
+              data-model-name="{{ model.name }}"
+              href="#"
+              >حذف</a
+            >
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <h4>لم يتم إنشاء مجموعات</h4>
+        {% endif %}
+      </div>
+      <form
+        class="hidden"
+        action="{% url 'add_course_group' id %}"
+        method="POST"
+      >
+        {% csrf_token %} {{ course_groups_form.as_p }}
+        <button type="submit" class="save_btn">حفظ</button>
+        <button type="reset" class="cancel_btn">إلغاء</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
